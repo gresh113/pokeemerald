@@ -90,7 +90,7 @@ static bool8 sub_808B618(void);
 static bool8 PlayerIsAnimActive(void);
 static bool8 PlayerCheckIfAnimFinishedOrInactive(void);
 
-static void PlayerRun(u8); 
+static void PlayerRun(u8);
 static void PlayerNotOnBikeCollide(u8);
 static void PlayerNotOnBikeCollideWithFarawayIslandMew(u8);
 
@@ -343,7 +343,7 @@ static bool8 TryInterruptEventObjectSpecialAnim(struct EventObject *playerEventO
         u8 r5 = direction;
         register u8 r6 asm("r6") = direction;
     #endif
-    //a very bad HACK 
+    //a very bad HACK
 
     if (EventObjectIsMovementOverridden(playerEventObj)
      && !EventObjectClearHeldMovementIfFinished(playerEventObj))
@@ -821,24 +821,14 @@ void SetPlayerAvatarTransitionFlags(u16 transitionFlags)
 static void DoPlayerAvatarTransition(void)
 {
     u8 i;
-    u32 flags = gPlayerAvatar.unk1;
+    u8 flags = gPlayerAvatar.unk1;
 
     if (flags != 0)
     {
         for (i = 0; i < 8; i++, flags >>= 1)
         {
-#ifdef NONMATCHING
             if (flags & 1)
-            {
                 gUnknown_084974B8[i](&gEventObjects[gPlayerAvatar.eventObjectId]);
-            }
-#else
-            if (flags & 1)
-            {
-                register void (*const *funcs)(struct EventObject *) asm("r0") = gUnknown_084974B8;
-                funcs[i](&gEventObjects[gPlayerAvatar.eventObjectId]);
-            }
-#endif
         }
         gPlayerAvatar.unk1 = 0;
     }
@@ -1151,7 +1141,7 @@ void PlayerGetDestCoords(s16 *x, s16 *y)
 u8 player_get_pos_including_state_based_drift(s16 *x, s16 *y)
 {
     struct EventObject *object = &gEventObjects[gPlayerAvatar.eventObjectId];
-    
+
     if (object->heldMovementActive && !object->heldMovementFinished && !gSprites[object->spriteId].data[2])
     {
         *x = object->currentCoords.x;
@@ -1198,9 +1188,9 @@ u8 PlayerGetZCoord(void)
     return gEventObjects[gPlayerAvatar.eventObjectId].previousElevation;
 }
 
-void sub_808BC90(s16 a, s16 b)
+void sub_808BC90(s16 x, s16 y)
 {
-    sub_808EB08(&gEventObjects[gPlayerAvatar.eventObjectId], a, b);
+    MoveEventObjectToMapCoords(&gEventObjects[gPlayerAvatar.eventObjectId], x, y);
 }
 
 u8 TestPlayerAvatarFlags(u8 a)
@@ -1347,13 +1337,13 @@ void SetPlayerAvatarStateMask(u8 flags)
     gPlayerAvatar.flags |= flags;
 }
 
-static u8 GetPlayerAvatarStateTransitionByGraphicsId(u8 a, u8 gender)
+static u8 GetPlayerAvatarStateTransitionByGraphicsId(u8 graphicsId, u8 gender)
 {
     u8 i;
 
     for (i = 0; i < 5; i++)
     {
-        if (gUnknown_0849750C[gender][i][0] == a)
+        if (gUnknown_0849750C[gender][i][0] == graphicsId)
             return gUnknown_0849750C[gender][i][1];
     }
     return 1;
@@ -1372,9 +1362,9 @@ u8 GetPlayerAvatarGraphicsIdByCurrentState(void)
     return 0;
 }
 
-void SetPlayerAvatarExtraStateTransition(u8 a, u8 b)
+void SetPlayerAvatarExtraStateTransition(u8 graphicsId, u8 b)
 {
-    u8 unk = GetPlayerAvatarStateTransitionByGraphicsId(a, gPlayerAvatar.gender);
+    u8 unk = GetPlayerAvatarStateTransitionByGraphicsId(graphicsId, gPlayerAvatar.gender);
 
     gPlayerAvatar.unk1 |= unk | b;
     DoPlayerAvatarTransition();
@@ -1765,7 +1755,7 @@ static bool8 Fishing2(struct Task *task)
 static bool8 Fishing3(struct Task *task)
 {
     AlignFishingAnimationFrames();
-    
+
     // Wait one second
     task->tFrameCounter++;
     if (task->tFrameCounter >= 60)
@@ -1928,7 +1918,7 @@ static bool8 Fishing9(struct Task *task)
 static bool8 Fishing10(struct Task *task)
 {
     AlignFishingAnimationFrames();
-    FillWindowPixelBuffer(0, 0x11);
+    FillWindowPixelBuffer(0, PIXEL_FILL(1));
     AddTextPrinterParameterized2(0, 1, gText_PokemonOnHook, 1, 0, 2, 1, 3);
     task->tStep++;
     task->tFrameCounter = 0;
@@ -1954,7 +1944,7 @@ static bool8 Fishing11(struct Task *task)
                 sub_8155604(gEventObjects[gPlayerAvatar.eventObjectId].fieldEffectSpriteId, 0, 0);
             gSprites[gPlayerAvatar.spriteId].pos2.x = 0;
             gSprites[gPlayerAvatar.spriteId].pos2.y = 0;
-            sub_8197434(0, TRUE);
+            ClearDialogWindowAndFrame(0, TRUE);
             task->tFrameCounter++;
             return FALSE;
         }
@@ -1976,7 +1966,7 @@ static bool8 Fishing12(struct Task *task)
 {
     AlignFishingAnimationFrames();
     StartSpriteAnim(&gSprites[gPlayerAvatar.spriteId], GetFishingNoCatchDirectionAnimNum(GetPlayerFacingDirection()));
-    FillWindowPixelBuffer(0, 0x11);
+    FillWindowPixelBuffer(0, PIXEL_FILL(1));
     AddTextPrinterParameterized2(0, 1, gText_NotEvenANibble, 1, 0, 2, 1, 3);
     task->tStep = FISHING_SHOW_RESULT;
     return TRUE;
@@ -1987,7 +1977,7 @@ static bool8 Fishing13(struct Task *task)
 {
     AlignFishingAnimationFrames();
     StartSpriteAnim(&gSprites[gPlayerAvatar.spriteId], GetFishingNoCatchDirectionAnimNum(GetPlayerFacingDirection()));
-    FillWindowPixelBuffer(0, 0x11);
+    FillWindowPixelBuffer(0, PIXEL_FILL(1));
     AddTextPrinterParameterized2(0, 1, gText_ItGotAway, 1, 0, 2, 1, 3);
     task->tStep++;
     return TRUE;
@@ -2027,7 +2017,7 @@ static bool8 Fishing16(struct Task *task)
         gPlayerAvatar.preventStep = FALSE;
         ScriptContext2_Disable();
         UnfreezeEventObjects();
-        sub_8197434(0, TRUE);
+        ClearDialogWindowAndFrame(0, TRUE);
         sub_80ED950(0);
         DestroyTask(FindTaskIdByFunc(Task_Fishing));
     }
@@ -2135,7 +2125,7 @@ void sub_808D194(void)
     sub_808D1FC(CreateTask(sub_808D1FC, 0));
 }
 
-bool8 sub_808D1B4(void)
+bool32 sub_808D1B4(void)
 {
     return FuncIsActiveTask(sub_808D1FC);
 }
@@ -2145,7 +2135,7 @@ void sub_808D1C8(void)
     sub_808D094(CreateTask(sub_808D094, 0));
 }
 
-bool8 sub_808D1E8(void)
+bool32 sub_808D1E8(void)
 {
     return FuncIsActiveTask(sub_808D094);
 }

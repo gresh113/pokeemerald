@@ -1,6 +1,6 @@
 LilycoveCity_LilycoveMuseum_2F_MapScripts:: @ 821973A
-	map_script 1, LilycoveCity_LilycoveMuseum_2F_MapScript1_219745
-	map_script 2, LilycoveCity_LilycoveMuseum_2F_MapScript2_2197FE
+	map_script MAP_SCRIPT_ON_LOAD, LilycoveCity_LilycoveMuseum_2F_MapScript1_219745
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, LilycoveCity_LilycoveMuseum_2F_MapScript2_2197FE
 	.byte 0
 
 LilycoveCity_LilycoveMuseum_2F_MapScript1_219745: @ 8219745
@@ -57,12 +57,12 @@ LilycoveCity_LilycoveMuseum_2F_EventScript_2197EB:: @ 82197EB
 	end
 
 LilycoveCity_LilycoveMuseum_2F_MapScript2_2197FE: @ 82197FE
-	map_script_2 VAR_0x4094, 0, LilycoveCity_LilycoveMuseum_2F_EventScript_219808
+	map_script_2 VAR_LILYCOVE_MUSEUM_2F_STATE, 0, LilycoveCity_LilycoveMuseum_2F_EventScript_219808
 	.2byte 0
 
 LilycoveCity_LilycoveMuseum_2F_EventScript_219808:: @ 8219808
 	lockall
-	applymovement 1, LilycoveCity_LilycoveMuseum_2F_Movement_27259E
+	applymovement 1, Common_Movement_FacePlayer
 	applymovement EVENT_OBJ_ID_PLAYER, LilycoveCity_LilycoveMuseum_2F_Movement_219861
 	waitmovement 0
 	msgbox LilycoveCity_LilycoveMuseum_2F_Text_2199EB, MSGBOX_SIGN
@@ -71,12 +71,12 @@ LilycoveCity_LilycoveMuseum_2F_EventScript_219808:: @ 8219808
 	applymovement EVENT_OBJ_ID_PLAYER, LilycoveCity_LilycoveMuseum_2F_Movement_219863
 	waitmovement 0
 	msgbox LilycoveCity_LilycoveMuseum_2F_Text_219A0D, MSGBOX_SIGN
-	applymovement 1, LilycoveCity_LilycoveMuseum_2F_Movement_27259E
+	applymovement 1, Common_Movement_FacePlayer
 	waitmovement 0
 	applymovement EVENT_OBJ_ID_PLAYER, LilycoveCity_LilycoveMuseum_2F_Movement_219861
 	waitmovement 0
 	msgbox LilycoveCity_LilycoveMuseum_2F_Text_219BC4, MSGBOX_SIGN
-	copyvar VAR_0x4094, 0x1
+	copyvar VAR_LILYCOVE_MUSEUM_2F_STATE, 0x1
 	releaseall
 	end
 
@@ -92,7 +92,7 @@ LilycoveCity_LilycoveMuseum_2F_Movement_219863: @ 8219863
 LilycoveCity_LilycoveMuseum_2F_EventScript_219866:: @ 8219866
 	lockall
 	goto_if_set FLAG_RECEIVED_GLASS_ORNAMENT, LilycoveCity_LilycoveMuseum_2F_EventScript_219921
-	specialvar VAR_0x8004, sub_80F8940
+	specialvar VAR_0x8004, CountPlayerContestPaintings
 	switch VAR_0x8004
 	case 1, LilycoveCity_LilycoveMuseum_2F_EventScript_2198BA
 	case 2, LilycoveCity_LilycoveMuseum_2F_EventScript_2198BA
@@ -107,7 +107,7 @@ LilycoveCity_LilycoveMuseum_2F_EventScript_2198BA:: @ 82198BA
 	end
 
 LilycoveCity_LilycoveMuseum_2F_EventScript_2198C3:: @ 82198C3
-	applymovement 1, LilycoveCity_LilycoveMuseum_2F_Movement_27259E
+	applymovement 1, Common_Movement_FacePlayer
 	waitmovement 0
 	msgbox LilycoveCity_LilycoveMuseum_2F_Text_219DD4, MSGBOX_DEFAULT
 	applymovement 1, LilycoveCity_LilycoveMuseum_2F_Movement_219863
@@ -116,7 +116,7 @@ LilycoveCity_LilycoveMuseum_2F_EventScript_2198C3:: @ 82198C3
 	end
 
 LilycoveCity_LilycoveMuseum_2F_EventScript_2198EA:: @ 82198EA
-	applymovement 1, LilycoveCity_LilycoveMuseum_2F_Movement_27259E
+	applymovement 1, Common_Movement_FacePlayer
 	msgbox LilycoveCity_LilycoveMuseum_2F_Text_219EC5, MSGBOX_DEFAULT
 	givedecoration_std 44
 	compare VAR_RESULT, 0
@@ -127,7 +127,7 @@ LilycoveCity_LilycoveMuseum_2F_EventScript_2198EA:: @ 82198EA
 	end
 
 LilycoveCity_LilycoveMuseum_2F_EventScript_219911:: @ 8219911
-	call LilycoveCity_LilycoveMuseum_2F_EventScript_272071
+	call Common_EventScript_NoRoomLeftForAnother
 	msgbox LilycoveCity_LilycoveMuseum_2F_Text_219EED, MSGBOX_DEFAULT
 	closemessage
 	releaseall

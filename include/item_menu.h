@@ -2,6 +2,7 @@
 #define GUARD_item_menu_H
 
 #include "item.h"
+#include "menu_helpers.h"
 
 #define RETURN_LOCATION_FIELD 0
 #define RETURN_LOCATION_BATTLE 1
@@ -28,9 +29,9 @@ struct BagStruct
     u16 scrollPosition[POCKETS_COUNT];
 };
 
-extern struct BagStruct gUnknown_0203CE58;
+extern struct BagStruct gBagPositionStruct;
 
-struct UnkBagStruct
+struct BagMenuStruct
 {
     void (*mainCallback2)(void);
     u8 tilemapBuffer[0x800];
@@ -60,7 +61,7 @@ struct UnkBagStruct
     u8 filler2[4];
 };
 
-extern struct UnkBagStruct *gUnknown_0203CE54;
+extern struct BagMenuStruct *gBagMenu;
 
 // Exported RAM declarations
 
@@ -71,6 +72,7 @@ void sub_81AAC14(void);
 void sub_81AAC50(void);
 void sub_81AAC70(void);
 void sub_81AAC28(void);
+void sub_81AABB0(void);
 void SetInitialScrollAndCursorPositions(u8 pocketId);
 void bag_menu_mail_related(void);
 void CB2_BagMenuFromStartMenu(void);
@@ -79,5 +81,12 @@ bool8 UseRegisteredKeyItemOnField(void);
 void CB2_GoToSellMenu(void);
 void GoToBagMenu(u8 bagMenuType, u8 pocketId, void ( *postExitMenuMainCallback2)());
 void DoWallyTutorialBagMenu(void);
+void ResetBagScrollPositions(void);
+void sub_81AABF0(void (*callback)(void));
+void CB2_ChooseBerry(void);
+void unknown_ItemMenu_Confirm(u8 taskId);
+void BagMenu_YesNo(u8, u8, const struct YesNoFuncTable*);
+void sub_81AB9A8(u8 pocketId);
+
 
 #endif //GUARD_item_menu_H

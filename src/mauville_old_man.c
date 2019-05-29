@@ -437,7 +437,7 @@ static void BardSong_TextSubPrinter(struct TextPrinterTemplate * printer, u16 a1
 
 static void sub_8120708(const u8 * src)
 {
-    NewMenuHelpers_DrawDialogueFrame(0, 0);
+    DrawDialogueFrame(0, 0);
     AddTextPrinterParameterized(0, 1, src, 0, 1, 1, BardSong_TextSubPrinter);
     gUnknown_03002F84 = TRUE;
     CopyWindowToVram(0, 3);
@@ -572,9 +572,6 @@ static void Task_BardSong(u8 taskId)
             struct MauvilleManBard *bard = &gSaveBlock1Ptr->oldMan.bard;
             u8 *str = gStringVar4 + task->tCharIndex;
             u16 wordLen = 0;
-            // Can't get it to match without hacking
-            u32 temp;
-            register s16 zero asm("r1");
 
             while (*str != CHAR_SPACE
                    && *str != CHAR_NEWLINE
@@ -588,17 +585,22 @@ static void Task_BardSong(u8 taskId)
                 sUnknownBardRelated = MACRO2(bard->songLyrics[task->tCurrWord]);
             else
                 sUnknownBardRelated = MACRO2(bard->temporaryLyrics[task->tCurrWord]);
-            temp = gBardSong.length / wordLen;
-            zero = 0;
-            gBardSong.length = temp;
+
+            gBardSong.length /= wordLen;
             if (gBardSong.length <= 0)
                 gBardSong.length = 1;
             task->tCurrWord++;
+
             if (task->data[2] == 0)
+            {
                 task->tState = 3;
+                task->data[1] = 0;
+            }
             else
+            {
                 task->tState = 5;
-            task->data[1] = zero;
+                task->data[1] = 0;
+            }
         }
             break;
         case 5:
@@ -912,7 +914,7 @@ struct Story
 };
 
 static const struct Story sStorytellerStories[] = {
-    {GAME_STAT_50, 1, MauvilleCity_PokemonCenter_1F_Text_28E930, MauvilleCity_PokemonCenter_1F_Text_28E947, MauvilleCity_PokemonCenter_1F_Text_28E956},
+    {GAME_STAT_NUM_UNION_ROOM_BATTLES, 1, MauvilleCity_PokemonCenter_1F_Text_28E930, MauvilleCity_PokemonCenter_1F_Text_28E947, MauvilleCity_PokemonCenter_1F_Text_28E956},
     {GAME_STAT_STARTED_TRENDS, 1, MauvilleCity_PokemonCenter_1F_Text_28E9D7, MauvilleCity_PokemonCenter_1F_Text_28E9EF, MauvilleCity_PokemonCenter_1F_Text_28E9FE},
     {GAME_STAT_PLANTED_BERRIES, 1, MauvilleCity_PokemonCenter_1F_Text_28EA7D, MauvilleCity_PokemonCenter_1F_Text_28EA98, MauvilleCity_PokemonCenter_1F_Text_28EAA8},
     {GAME_STAT_TRADED_BIKES, 1, MauvilleCity_PokemonCenter_1F_Text_28EB19, MauvilleCity_PokemonCenter_1F_Text_28EB31, MauvilleCity_PokemonCenter_1F_Text_28EB3E},
@@ -1180,9 +1182,9 @@ static void Task_StoryListMenu(u8 taskId) // Task_StoryListMenu
             break;
         case 1:
             selection = Menu_ProcessInput();
-            if (selection == -2)
+            if (selection == MENU_NOTHING_CHOSEN)
                 break;
-            if (selection == -1 || selection == GetFreeStorySlot())
+            if (selection == MENU_B_PRESSED || selection == GetFreeStorySlot())
             {
                 gSpecialVar_Result = 0;
             }
@@ -1191,7 +1193,7 @@ static void Task_StoryListMenu(u8 taskId) // Task_StoryListMenu
                 gSpecialVar_Result = 1;
                 sSelectedStory = selection;
             }
-            sub_80E2A78(sStorytellerWindowId);
+            ClearToTransparentAndRemoveWindow(sStorytellerWindowId);
             DestroyTask(taskId);
             EnableBothScriptContexts();
             break;

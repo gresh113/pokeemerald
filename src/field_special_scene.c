@@ -13,6 +13,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "task.h"
+#include "constants/event_objects.h"
 #include "constants/songs.h"
 #include "constants/vars.h"
 
@@ -300,8 +301,8 @@ void Task_HandlePorthole(u8 taskId)
         }
         break;
     case EXIT_PORTHOLE: // exit porthole.
-        FlagClear(0x4001);
-        FlagClear(0x4000);
+        FlagClear(FLAG_SPECIAL_FLAG_0x4001);
+        FlagClear(FLAG_HIDE_MAP_NAME_POPUP);
         SetWarpDestinationToDynamicWarp(0);
         DoDiveWarp();
         DestroyTask(taskId);
@@ -311,11 +312,11 @@ void Task_HandlePorthole(u8 taskId)
 
 void sub_80FB6EC(void)
 {
-    u8 spriteId = AddPseudoEventObject(0x8C, SpriteCallbackDummy, 112, 80, 0);
+    u8 spriteId = AddPseudoEventObject(EVENT_OBJ_GFX_SS_TIDAL, SpriteCallbackDummy, 112, 80, 0);
 
     gSprites[spriteId].coordOffsetEnabled = FALSE;
 
-    if (VarGet(0x40B4) == 2)
+    if (VarGet(VAR_PORTHOLE_STATE) == 2)
     {
         StartSpriteAnim(&gSprites[spriteId], GetFaceDirectionAnimNum(4));
     }
@@ -337,8 +338,8 @@ void sub_80FB768(void)
 void sub_80FB7A4(void)
 {
     FlagSet(FLAG_SYS_CRUISE_MODE);
-    FlagSet(0x4001);
-    FlagSet(0x4000);
+    FlagSet(FLAG_SPECIAL_FLAG_0x4001);
+    FlagSet(FLAG_HIDE_MAP_NAME_POPUP);
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, -1);
     sub_80FB59C();
     sub_80AF8B8();
